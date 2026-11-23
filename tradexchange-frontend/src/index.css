@@ -1,0 +1,231 @@
+/* =========================
+   🌗 THEME SYSTEM (ZERODHA STYLE)
+========================= */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================
+   🌤 LIGHT THEME (DEFAULT)
+========================= */
+:root {
+  /* BACKGROUND */
+  --bg: #f7f7f7;
+  --card: #ffffff;
+  --card-2: #fafafa;
+
+  /* TEXT */
+  --text: #222222;
+  --muted: #6b7280;
+
+  /* BORDER */
+  --border: #e6e6e6;
+
+  /* PRIMARY (ZERODHA BLUE) */
+  --primary: #387ed1;
+  --primary-soft: rgba(56, 126, 209, 0.1);
+
+  /* TRADING COLORS */
+  --success: #16a34a;
+  --danger: #dc2626;
+}
+
+/* =========================
+   🌑 DARK THEME (CLEAN)
+========================= */
+.dark {
+  --bg: #0f172a;
+  --card: #111827;
+  --card-2: #1f2937;
+
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+
+  --border: #1f2937;
+
+  --primary: #3b82f6;
+  --primary-soft: rgba(59, 130, 246, 0.15);
+
+  --success: #22c55e;
+  --danger: #ef4444;
+}
+
+/* =========================
+   🌍 GLOBAL
+========================= */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-size: 13px;              /* 🔥 Zerodha density */
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =========================
+   ⚡ TRANSITIONS
+========================= */
+body, button, div, input {
+  transition: background-color 0.2s ease,
+              color 0.2s ease,
+              border 0.2s ease;
+}
+
+/* =========================
+   📦 CARD SYSTEM (FLAT)
+========================= */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+
+  /* ❌ No heavy shadows */
+  box-shadow: none;
+}
+
+/* =========================
+   ✏️ TEXT SYSTEM
+========================= */
+.text-muted {
+  color: var(--muted);
+}
+
+/* =========================
+   📊 TRADING COLORS
+========================= */
+.price-up {
+  color: var(--success);
+}
+
+.price-down {
+  color: var(--danger);
+}
+
+/* 🔥 subtle flash (important UX) */
+.flash-green {
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.flash-red {
+  background: rgba(220, 38, 38, 0.08);
+}
+
+/* =========================
+   🎯 WATCHLIST (KITE STYLE)
+========================= */
+.watchlist-item {
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.watchlist-item:hover {
+  background: #f0f0f0;
+}
+
+.watchlist-active {
+  background: #e8f1fd;
+  color: var(--primary);
+}
+
+/* =========================
+   🔘 BUTTON SYSTEM
+========================= */
+.btn-buy {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.btn-buy:hover {
+  background: #2f6cb5;
+}
+
+.btn-sell {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.btn-sell:hover {
+  background: #e5e7eb;
+}
+
+/* =========================
+   🎬 ANIMATIONS
+========================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.15s ease;
+}
+
+/* =========================
+   🖱️ SCROLLBAR (LIGHT)
+========================= */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* =========================
+   📱 ROOT HEIGHT FIX
+========================= */
+html, body, #root {
+  height: 100%;
+}
+
+/* =========================
+   🎯 INPUT
+========================= */
+input {
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary-soft);
+}
+
+/* =========================
+   🖱️ BUTTON INTERACTION
+========================= */
+button {
+  transition: all 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* hide scrollbar cleanly */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
