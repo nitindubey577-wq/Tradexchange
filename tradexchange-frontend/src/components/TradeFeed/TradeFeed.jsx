@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSocket } from "../../hooks/useSocket";
+import api from "../../services/api";
 
 const MAX_TRADES = 60;
 
@@ -7,6 +8,35 @@ const TradeFeed = ({ symbol }) => {
   const [trades, setTrades] = useState([]);
   const frameRef = useRef(null);
   const containerRef = useRef(null);
+
+  /* ===============================
+     📥 INITIAL REST FETCH
+  =============================== */
+  useEffect(() => {
+    if (!symbol) return;
+    let cancelled = false;
+
+    api
+      .get(`/trades?symbol=${symbol}`)
+      .then((res) => {
+        if (cancelled || !res.data?.data) return;
+        const rawTrades = Array.isArray(res.data.data) ? res.data.data : [];
+        setTrades(
+          rawTrades.slice(0, MAX_TRADES).map((t) => ({
+            ...t,
+            id: t.tradeId || t.id || crypto.randomUUID(),
+            side: t.side || "BUY",
+            timestamp: t.timestamp ? new Date(t.timestamp).getTime() : Date.now(),
+            flash: false,
+          }))
+        );
+      })
+      .catch((err) => console.warn("Trades fetch error:", err.message));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [symbol]);
 
   /* ===============================
      📡 SOCKET (FIXED)

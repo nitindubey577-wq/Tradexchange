@@ -88,23 +88,54 @@ public class Broadcaster {
         }
     }
 
+    private void broadcastDepth(String symbol) {
+        if (symbol == null) return;
+        String sym = symbol.toUpperCase().trim();
+        try {
+            OrderBookDepth depth = matchingEngine.getDepth(sym);
+            Map<String, Object> depthPayload = new HashMap<>();
+            depthPayload.put("symbol", sym);
+            depthPayload.put("bids", depth.getBids());
+            depthPayload.put("asks", depth.getAsks());
+            socketHandler.broadcast(sym, "depth", depthPayload);
+        } catch (Exception e) {
+            log.warn("Failed to broadcast depth for {}: {}", sym, e.getMessage());
+        }
+    }
+
     @EventListener
     public void onOrderPlaced(OrderPlacedEvent event) {
         socketHandler.broadcast("ORDERS", "orderPlaced", event.getOrder());
+        if (event.getOrder() != null) {
+            socketHandler.broadcast("ORDERS", "orders", java.util.List.of(event.getOrder()));
+            broadcastDepth(event.getOrder().getSymbol());
+        }
     }
 
     @EventListener
     public void onOrderPartiallyFilled(OrderPartiallyFilledEvent event) {
         socketHandler.broadcast("ORDERS", "orderPartiallyFilled", event.getOrder());
+        if (event.getOrder() != null) {
+            socketHandler.broadcast("ORDERS", "orders", java.util.List.of(event.getOrder()));
+            broadcastDepth(event.getOrder().getSymbol());
+        }
     }
 
     @EventListener
     public void onOrderFilled(OrderFilledEvent event) {
         socketHandler.broadcast("ORDERS", "orderFilled", event.getOrder());
+        if (event.getOrder() != null) {
+            socketHandler.broadcast("ORDERS", "orders", java.util.List.of(event.getOrder()));
+            broadcastDepth(event.getOrder().getSymbol());
+        }
     }
 
     @EventListener
     public void onOrderCancelled(OrderCancelledEvent event) {
         socketHandler.broadcast("ORDERS", "orderCancelled", event.getOrder());
+        if (event.getOrder() != null) {
+            socketHandler.broadcast("ORDERS", "orders", java.util.List.of(event.getOrder()));
+            broadcastDepth(event.getOrder().getSymbol());
+        }
     }
 }

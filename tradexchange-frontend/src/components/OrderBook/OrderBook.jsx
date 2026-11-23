@@ -5,6 +5,7 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { useSocket } from "../../hooks/useSocket";
 import { useOrderFormStore } from "../../store/useOrderFormStore";
+import api from "../../services/api";
 
 const MAX_LEVELS = 15;
 
@@ -14,6 +15,57 @@ const OrderBook = ({ symbol }) => {
 
   const frameRef = useRef(null);
   const setPrice = useOrderFormStore((s) => s.setPrice);
+
+  /* ===============================
+     📥 INITIAL REST FETCH
+  =============================== */
+  useEffect(() => {
+    if (!symbol) return;
+    let cancelled = false;
+
+    api
+      .get(`/depth/${symbol}`)
+      .then((res) => {
+        if (cancelled || !res.data?.data) return;
+        const { bids: rawBids = [], asks: rawAsks = [] } = res.data.data;
+
+        const topBids = rawBids
+          .slice(0, MAX_LEVELS)
+          .sort((a, b) => b.price - a.price);
+
+        const topAsks = rawAsks
+          .slice(0, MAX_LEVELS)
+          .sort((a, b) => a.price - b.price);
+
+        let bidTotal = 0;
+        const bidsCum = topBids.map((b) => {
+          bidTotal += Number(b.quantity || 0);
+          return {
+            price: Number(b.price),
+            quantity: Number(b.quantity),
+            total: bidTotal,
+          };
+        });
+
+        let askTotal = 0;
+        const asksCum = topAsks.map((a) => {
+          askTotal += Number(a.quantity || 0);
+          return {
+            price: Number(a.price),
+            quantity: Number(a.quantity),
+            total: askTotal,
+          };
+        });
+
+        setBids(bidsCum);
+        setAsks(asksCum);
+      })
+      .catch((err) => console.warn("Depth fetch error:", err.message));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [symbol]);
 
   /* ===============================
      📡 SOCKET
